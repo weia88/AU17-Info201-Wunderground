@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-  
-=======
 library(jsonlite)
 library(httr)
 
@@ -16,4 +13,3 @@ Get.Forecast <- function(state, city){
   simple.forecast <- flatten(response$forecast$simpleforecast$forecastday)
   return (simple.forecast)
 }
->>>>>>> bc66ae542c584e719b278f2eac874dc927618762
