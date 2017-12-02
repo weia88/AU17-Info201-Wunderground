@@ -1,1 +1,0 @@
-api.key <- "b27e4dbcdbe8c794"
