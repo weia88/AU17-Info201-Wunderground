@@ -13,21 +13,25 @@ library(shiny)
 shinyUI(fluidPage(
   
   # Application title
-  titlePanel("Old Faithful Geyser Data"),
+  titlePanel("Weather"),
   
-  # Sidebar with a slider input for number of bins 
-  sidebarLayout(
-    sidebarPanel(
-       sliderInput("bins",
-                   "Number of bins:",
-                   min = 1,
-                   max = 50,
-                   value = 30)
-    ),
-    
-    # Show a plot of the generated distribution
+  # Text input for initial city and drop down menu for all the states
+    sidebarLayout(
+      sidebarPanel(
+        selectInput("intial.state", "State:", all.states, multiple = FALSE),
+        textInput("initial.city", "Move from:", value = "") 
+      ),
+      
+  # Text input for final destination city and drop down menu for all the states
+    sidebarLayout(
+      sidebarPanel(
+        selectInput("final.state", "State:", all.states, multiple = FALSE),
+        textInput("final.city", "To:", value = "") 
+        ),
+  # Show a plot of the generated distribution
     mainPanel(
-       plotOutput("distPlot")
     )
   )
-))
+)
+)
+)
