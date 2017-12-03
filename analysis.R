@@ -1,6 +1,6 @@
 library(jsonlite)
 library(httr)
-
+library(dplyr)
 # Returns city 10-day forecast given state and city name. 
 # Note: In returned dataframe:
 # 'pop' = probability of precipitation.
@@ -12,4 +12,10 @@ Get.Forecast <- function(state, city){
   response <- fromJSON(content(request, "text"))
   simple.forecast <- flatten(response$forecast$simpleforecast$forecastday)
   return (simple.forecast)
+}
+
+Get.Values <- function(location){
+  values <- location %>%
+              select(date.day, date.month, date.year, high.fahrenheit, low.fahrenheit, pop, avehumidity)
+  return(values)
 }
