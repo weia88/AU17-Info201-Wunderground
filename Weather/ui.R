@@ -1,13 +1,5 @@
-#
-# This is the user-interface definition of a Shiny web application. You can
-# run the application by clicking 'Run App' above.
-#
-# Find out more about building applications with Shiny here:
-# 
-#    http://shiny.rstudio.com/
-#
-
 library(shiny)
+library(plotly)
 
 # Define UI for application that draws a histogram
 shinyUI(fluidPage(
@@ -26,10 +18,13 @@ shinyUI(fluidPage(
     sidebarLayout(
       sidebarPanel(
         selectInput("final.state", "State:", all.states, multiple = FALSE),
-        textInput("final.city", "City:", value = "") 
+        textInput("final.city", "City:", value = ""),
+        actionButton("show.alert", "Show Alert", icon = NULL, width = NULL)
         ),
+ 
   # Show a plot of the generated distribution
     mainPanel(
+      plotlyOutput("line.plot")
     )
   )
 )
