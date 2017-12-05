@@ -3,12 +3,10 @@ library(dplyr)
 library(tidyr)
 source('analysis.R')
 
-all.states <- read.csv(file = "data/states.csv")
 
 # Define server logic required to draw a histogram
 shinyServer(function(input, output) {
     output$line.plot <- renderPlotly({
-      
       # Filter data with state and city selection.
       location1.data <- GetValues(GetForecast(input$initial.state, input$initial.city))
       location2.data <- GetValues(GetForecast(input$final.state, input$final.city))
