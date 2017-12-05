@@ -10,11 +10,11 @@ shinyUI(fluidPage(
   # Text input for initial city and drop down menu for all the states
     sidebarLayout(
       sidebarPanel(
-        selectInput("intial.state", "State:", all.states, multiple = FALSE),
+        selectInput("initial.state", "State:", all.states, multiple = FALSE),
         textInput("initial.city", "City:", value = "") 
       ),
       
-  # Text input for final destination city and drop down menu for all the states
+  # Text input for final destination city and drop down menu for all the states and also button for alert
     sidebarLayout(
       sidebarPanel(
         selectInput("final.state", "State:", all.states, multiple = FALSE),

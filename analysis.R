@@ -20,11 +20,17 @@ GetValues <- function(location){
   return(values)
 }
 
+# Creates a function that obtains the alert of a certain city and state
 GetAlert <- function(state, city){
   formatted.city <- gsub(" ", "_", city)
   url <- paste0("http://api.wunderground.com/api/", api.key, "/alerts/q/", state, "/", formatted.city, "/.json")
   request <- GET(url)
   response <- fromJSON(content(request, "text"))
-  alert <- response$alerts[, c(1:3, 5, 7:8)] 
-  return (alert)
+  if(is.na(dim(response$alerts)[1] == 0 && dim(response$alerts)[2] == 0)){ 
+    filtered.alert <- "NO ALERT IN THIS CURRENT AREA"
+  } else {
+    alert <- response$alerts[, c(2:5)] 
+    filtered.alert <- toupper(paste(alert$description, "Began:", alert$date, "Ends:", alert$expires, sep = " "))
+  }
+  return (filtered.alert)
 }
