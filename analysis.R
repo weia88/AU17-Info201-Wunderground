@@ -5,6 +5,9 @@ library(dplyr)
 # Note: In returned dataframe:
 # 'pop' = probability of precipitation.
 # 'qpf' = quantitative precipitation forecast
+all.states <- read.csv(file = "data/states.csv")
+
+# Creates a function that obtains a certain state and city's 10 day forcast information 
 GetForecast <- function(state, city){
   formatted.city <- gsub(" ", "_", city)
   url <- paste0("http://api.wunderground.com/api/", api.key, "/forecast10day/q/", state, "/", formatted.city, "/.json")
