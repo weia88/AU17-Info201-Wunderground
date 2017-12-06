@@ -13,6 +13,8 @@ GetForecast <- function(state, city){
   url <- paste0("http://api.wunderground.com/api/", api.key, "/forecast10day/q/", state, "/", formatted.city, "/.json")
   request <- GET(url)
   response <- fromJSON(content(request, "text"))
+  if(!is.data.frame(response$forecast$simpleforecast$forecastday))
+    return ("Error")
   simple.forecast <- flatten(response$forecast$simpleforecast$forecastday)
   return (simple.forecast)
 }
@@ -36,4 +38,22 @@ GetAlert <- function(state, city){
     filtered.alert <- toupper(paste(alert$description, "Began:", alert$date, "Ends:", alert$expires, sep = " "))
   }
   return (filtered.alert)
+}
+
+
+GetHistoricalData <- function(state, city){
+  months <- formatC(c(1:12), width = 2, flag = "0")
+  formatted.city <- gsub(" ", "_", city)
+  urls <- paste0("http://api.wunderground.com/api/", api.key, "/planner_", months, "01", months, "31/q/", state, "/", formatted.city, ".json")
+
+  data <- lapply(urls, function(url){
+    request <- GET(url)
+    response <- fromJSON(content(request, "text"))
+    return (response$trip)
+  })
+
+  highlist <- sapply(data, function(x) { return (x$temp_high$avg$F) })
+  lowlist <- sapply(data, function(x) { return (x$temp_low$avg$F) })
+  df <- data.frame(low = lowlist, high = highlist)
+  return (df)
 }
