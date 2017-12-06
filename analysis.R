@@ -19,6 +19,7 @@ GetForecast <- function(state, city){
   return (simple.forecast)
 }
 
+# Processes data for a given location.
 GetValues <- function(location){
   values <- location %>%
               select(date.day, date.month, date.year, high.fahrenheit, low.fahrenheit, pop, avehumidity)
@@ -40,7 +41,7 @@ GetAlert <- function(state, city){
   return (filtered.alert)
 }
 
-
+# Retrives monthly historical data for the given state/city.
 GetHistoricalData <- function(state, city){
   months <- formatC(c(1:12), width = 2, flag = "0")
   formatted.city <- gsub(" ", "_", city)
