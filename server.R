@@ -54,22 +54,26 @@ shinyServer(function(input, output) {
     
     # To render historical data
     render.historical.plot <- renderPlotly({
-      location1.data <- GetHistoricalData(input$initial.state, input$initial.city)
-      location2.data <- GetHistoricalData(input$final.state, input$final.city)
+      progress <- shiny::Progress$new()
+      on.exit(progress$close())
+      
+      progress$set(message = "Making plot", value = 0)
+      location1.data <- GetHistoricalData(input$initial.state, input$initial.city, progress)
+      location2.data <- GetHistoricalData(input$final.state, input$final.city, progress)
 
       if(location1.data == "Error" || location2.data == "Error"){
         return ()
       }
-      
+      print(location2.data)
       lowlist1 <- as.vector(location1.data$low)
       highlist1 <- as.vector(location1.data$high)
       lowlist2 <- as.vector(location2.data$low)
       highlist2 <- as.vector(location2.data$high)
       
       # 1st City Plot
-      # Make months usable on x axis
-      months <- c(1:12)
-      monthNames <- c("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December")
+      # Make seasons usable on x axis
+      monthNames <- c("Spring", "Summer", "Autumn", "Winter")
+      # From analysis.R
       months <- factor(months, levels = months, labels = monthNames)
       
       plot_ly(location1.data, x = months, y = highlist1, type = 'scatter', mode = 'lines',
@@ -97,7 +101,7 @@ shinyServer(function(input, output) {
 
 
         layout(title = 'Historical Temperature Comparison',
-               xaxis = list(title = 'Day', showgrid = TRUE, showline = FALSE, showticklabels = TRUE, dtick = 1),
+               xaxis = list(title = 'Season', showgrid = TRUE, showline = FALSE, showticklabels = TRUE, dtick = 1),
                yaxis = list(title = 'Temperature (degrees F)', showgrid = TRUE, showline = FALSE,
                             showticklabels = TRUE, tick.vals = 4))
     })

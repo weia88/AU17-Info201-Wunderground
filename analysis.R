@@ -41,13 +41,14 @@ GetAlert <- function(state, city){
   return (filtered.alert)
 }
 
+months <- formatC(c(2, 5, 8, 11), width = 2, flag = "0")
+
 # Retrives monthly historical data for the given state/city.
-GetHistoricalData <- function(state, city){
-  months <- formatC(c(1:12), width = 2, flag = "0")
+GetHistoricalData <- function(state, city, progress){
   formatted.city <- gsub(" ", "_", city)
   urls <- paste0("http://api.wunderground.com/api/", api.key, "/planner_", months, "01", months, "31/q/", state, "/", formatted.city, ".json")
-
   data <- lapply(urls, function(url){
+    progress$inc(1 / length(months) / 2)
     request <- GET(url)
     response <- fromJSON(content(request, "text"))
     return (response$trip)
