@@ -1,6 +1,7 @@
 library(jsonlite)
 library(httr)
 library(dplyr)
+source("api-keys.r")
 # Returns city 10-day forecast given state and city name. 
 # Note: In returned dataframe:
 # 'pop' = probability of precipitation.
