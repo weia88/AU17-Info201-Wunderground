@@ -109,6 +109,7 @@ shinyServer(function(input, output) {
         layout(margin = list(l = 50, r = 40 , b = 60, t = 50, pad = 3))
     })
     
+    # Show precipitation (historical, avg) information
     RenderPrecipPlot <- function(data1, data2){
       output$precip.plot <- renderPlotly({
       precip1 <- data1$precip
@@ -138,6 +139,12 @@ shinyServer(function(input, output) {
       showNotification(GetAlert(input$final.state, input$final.city), type = "error", duration = 10, closeButton = TRUE)
       })
     
+    # Display about information
+    observeEvent(input$about.button, ignoreNULL = TRUE, {
+      showNotification(about.description, id = "id", type = "message", duration = 100, closeButton = TRUE)
+    })
+    
+    # Use reactive values so the plots only update once a button is pressed
     values <- reactiveValues(variable = NA)
     observe({
       if(input$compare.button > 0){
@@ -147,9 +154,11 @@ shinyServer(function(input, output) {
         values$final.state <- isolate(input$final.state)
       }
     })
-      observeEvent(input$compare.button, ignoreNULL = TRUE, {
+    
+    # Render plots when compare button clicked
+    observeEvent(input$compare.button, ignoreNULL = TRUE, {
         output$line.plot <- render10DayPlot
         output$historical.plot <- render.historical.plot
-      })
+    })
 })
 

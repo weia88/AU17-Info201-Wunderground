@@ -7,9 +7,11 @@ shinyUI(
   fluidPage(
     theme = "style.css",
     # Application titles
-    titlePanel("Weather Comparison"),
+    fluidRow(column(2, br(), actionButton("about.button", "About", icon = NULL, width = '125px', style = 'height: 45px')), 
+             column(1),
+             column(6, titlePanel("Weather Comparison")), column(3)),
     fluidRow(
-      column(3),
+      column(3), 
       column(1, br(), h5("From:") , br(), br(), h5("To:")),
       column(3,
         textInput("initial.city", "City:", value = "Seattle"),

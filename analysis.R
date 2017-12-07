@@ -2,13 +2,10 @@ library(jsonlite)
 library(httr)
 library(dplyr)
 source("api-keys.r")
-# Returns city 10-day forecast given state and city name. 
-# Note: In returned dataframe:
-# 'pop' = probability of precipitation.
-# 'qpf' = quantitative precipitation forecast
+
 all.states <- read.csv(file = "data/states.csv")
 
-# Creates a function that obtains a certain state and city's 10 day forcast information 
+# Returns city 10-day forecast given state and city name. 
 GetForecast <- function(state, city){
   formatted.city <- gsub(" ", "_", city)
   url <- paste0("http://api.wunderground.com/api/", api.key, "/forecast10day/q/", state, "/", formatted.city, "/.json")
@@ -47,15 +44,18 @@ months <- formatC(c(2, 5, 8, 11), width = 2, flag = "0")
 # Retrives monthly historical data for the given state/city.
 GetHistoricalData <- function(state, city, progress){
   formatted.city <- gsub(" ", "_", city)
+  # Requires multiple api calls, perform this using lapply
   urls <- paste0("http://api.wunderground.com/api/", api.key, "/planner_", months, "01", months, "31/q/", state, "/", formatted.city, ".json")
   data <- lapply(urls, function(url){
+    # Increment our progress bar
     if(!is.null(progress))
       progress$inc(1 / length(months) / 2)
     request <- GET(url)
     response <- fromJSON(content(request, "text"))
     return (response$trip)
   })
-
+  
+  # API data is a bit oddly formatted, make a dataframe by first making vectors out of the data we want
   highlist <- sapply(data, function(x) { return (x$temp_high$avg$F) })
   lowlist <- sapply(data, function(x) { return (x$temp_low$avg$F) })
   precip <- sapply(data, function(x) { 
@@ -63,3 +63,9 @@ GetHistoricalData <- function(state, city, progress){
   df <- data.frame(low = lowlist, high = highlist, precip = precip)
   return (df)
 }
+
+# Store this description for later use
+about.description <- "This web application intends to help those traveling to new areas of the country, whether
+it's for a short time or permanently. We use data from the Wunderground Weather API to make our plots. This webapp 
+was built by Andrew Wei, Austin Hsieh, Gol-Dann Slater, and Jin Zhou, and its source is available at 
+https://github.com/weia88/AU17-Info201-Wunderground."
