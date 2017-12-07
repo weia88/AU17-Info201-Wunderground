@@ -21,7 +21,8 @@ shinyUI(fluidPage(theme = "style.css",
     
   # Show a plots of generated distributions
   fluidRow(column(12, plotlyOutput("line.plot"), br())),
-  fluidRow(column(12, plotlyOutput("historical.plot")))
+  fluidRow(column(12, plotlyOutput("historical.plot"))),
+  fluidRow(column(12, plotlyOutput("precip.plot")))
   )
 )
 

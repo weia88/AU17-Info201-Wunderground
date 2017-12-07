@@ -48,7 +48,8 @@ GetHistoricalData <- function(state, city, progress){
   formatted.city <- gsub(" ", "_", city)
   urls <- paste0("http://api.wunderground.com/api/", api.key, "/planner_", months, "01", months, "31/q/", state, "/", formatted.city, ".json")
   data <- lapply(urls, function(url){
-    progress$inc(1 / length(months) / 2)
+    if(!is.null(progress))
+      progress$inc(1 / length(months) / 2)
     request <- GET(url)
     response <- fromJSON(content(request, "text"))
     return (response$trip)
@@ -56,6 +57,8 @@ GetHistoricalData <- function(state, city, progress){
 
   highlist <- sapply(data, function(x) { return (x$temp_high$avg$F) })
   lowlist <- sapply(data, function(x) { return (x$temp_low$avg$F) })
-  df <- data.frame(low = lowlist, high = highlist)
+  precip <- sapply(data, function(x) { 
+    return (x$precip$avg$`in`)})
+  df <- data.frame(low = lowlist, high = highlist, precip = precip)
   return (df)
 }
