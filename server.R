@@ -8,7 +8,6 @@ source('analysis.R')
 shinyServer(function(input, output) {
     render10DayPlot <- renderPlotly({
       # Filter data with state and city selection.
-
       forecast1 <- GetForecast(values$initial.state, values$initial.city)
       forecast2 <- GetForecast(values$final.state, values$final.city)
       
@@ -17,6 +16,8 @@ shinyServer(function(input, output) {
         showNotification("City not found", type = "error", duration = 2, closeButton = TRUE)
         return ()
       }
+      
+      GenerateAnalysis(forecast1, forecast2)
       
       location1.data <- GetValues(forecast1)
       location2.data <- GetValues(forecast2)
@@ -77,6 +78,7 @@ shinyServer(function(input, output) {
       monthNames <- c("Spring", "Summer", "Autumn", "Winter")
       # From analysis.R
       months <- factor(months, levels = months, labels = monthNames)
+      GenerateHistoricalAnalysis(location1.data, location2.data)
       RenderPrecipPlot(location1.data, location2.data)
       plot_ly(location1.data, x = months, y = highlist1, type = 'scatter', mode = 'lines',
               line = list(color = 'blue'), name = paste(values$initial.city, 'Highs'), hoverinfo = 'text',
@@ -133,6 +135,49 @@ shinyServer(function(input, output) {
         layout(margin = list(l = 50, r = 40 , b = 60, t = 50, pad = 3))
       })
     }
+    
+    GenerateAnalysis <- function(forecast1, forecast2){
+      output$analysis.text <- renderText({
+        data <- GetCityStats(forecast1$low.fahrenheit, forecast1$high.fahrenheit, forecast2$low.fahrenheit, forecast2$high.fahrenheit)
+        
+        diff.pop <- round(abs(mean(forecast1$pop) - mean(forecast2$pop)), 1)
+        diff.humid <- round(abs(mean(forecast1$avehumidity) - mean(forecast2$avehumidity)), 1)
+        text <- paste0("Comparing ", values$initial.city, " and ", values$final.city, ", ") %>%
+          paste0(GenerateHighLowAnalysis(data)) %>% paste0("For the next ten days, ", ifelse(mean(forecast1$pop) > mean(forecast2$pop), values$initial.city, valuesfinal.city)) %>%
+          paste0(" will be more likely to rain by ", diff.pop, "%, and ") %>%
+          paste0(ifelse(mean(forecast1$pop) > mean(forecast2$pop), values$initial.city, valuesfinal.city), " will be more humid") %>%
+          paste0(" by ", diff.humid, "%.")
+          
+        c("<div id='analysis'><h2>Analysis</h2>", text, "</div>")
+      })
+    }
+    
+    GetCityStats <- function(lows1, highs1, lows2, highs2){
+      low.sd1 <- sd(lows1)
+      low.sd2 <- sd(lows2)
+      high.sd1 <- sd(highs1)
+      high.sd2 <- sd(highs2)
+      higher.low <- ifelse(low.sd1 > low.sd2, round(low.sd1), round(low.sd2))
+      higher.low.city <- ifelse(low.sd1 > low.sd2, values$initial.city, values$final.city)
+      higher.high <- ifelse(high.sd1 > high.sd2, round(high.sd1), round(high.sd2))
+      higher.high.city <- ifelse(high.sd1 > high.sd2, values$initial.city, values$final.city)
+      return (data.frame(low.sd1, low.sd2, high.sd1, high.sd2, higher.low, higher.low.city, higher.high, higher.high.city))
+    }
+    
+    GenerateHighLowAnalysis <- function(data){
+      return (paste0(data$higher.low.city, " will have more unpredictable lows", " with a standard deviation of ") %>%
+        paste0(data$higher.low, " degrees F. ", data$higher.high.city, " will have more unpredictable highs") %>%
+        paste0(" with a standard deviation of ", data$higher.high, " degrees F.") %>% paste0("<br>"))
+    }
+    
+    GenerateHistoricalAnalysis <- function(location.data1, location.data2){
+      output$historical.analysis.text <- renderText({
+        data <- GetCityStats(as.vector(location.data1$low), as.vector(location.data1$high), as.vector(location.data2$low), as.vector(location.data2$high))
+        text <- paste0("Historically, ", GenerateHighLowAnalysis(data))
+        c("<div id='analysis'>", text, "</div>")
+      })
+    }
+  
     
     # Shows the alert if an area has an alert
     observeEvent(input$show.alert, ignoreNULL = TRUE, { 

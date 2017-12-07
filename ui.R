@@ -39,6 +39,9 @@ shinyUI(
     hr(),
     fluidRow(column(12, plotlyOutput("historical.plot"))),
     hr(),
-    fluidRow(column(12, plotlyOutput("precip.plot")))
+    fluidRow(column(12, plotlyOutput("precip.plot"))),
+    hr(),
+    htmlOutput("analysis.text"),
+    htmlOutput("historical.analysis.text")
   )
 )
