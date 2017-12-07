@@ -10,7 +10,7 @@ shinyUI(fluidPage(theme = "style.css",
     column(2),
     column(1, br(), h5("From"), br(), br(), h5("To")),
     column(2, textInput("initial.city", "City:", value = "Seattle"),
-           textInput("final.city", "City:", value = "Orange Cove")),
+           textInput("final.city", "City:", value = "Sun City")),
     # Text input for initial city and drop down menu for all the states
     column(2, selectInput("initial.state", "State:", all.states, multiple = FALSE, selected = "WA"),
     # Text input for final destination city and drop down menu for all the states and also button for alert
