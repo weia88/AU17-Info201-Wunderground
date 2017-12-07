@@ -6,7 +6,7 @@ source('analysis.R')
 
 # Define server logic required to draw a histogram
 shinyServer(function(input, output) {
-    render.10day.plot <- renderPlotly({
+    render10DayPlot <- renderPlotly({
       # Filter data with state and city selection.
 
       forecast1 <- GetForecast(values$initial.state, values$initial.city)
@@ -50,7 +50,8 @@ shinyServer(function(input, output) {
       layout(title = '10-Day Temperature Comparison',
              xaxis = list(title = 'Day of Month', showgrid = TRUE, showline = FALSE, showticklabels = TRUE, dtick = 1),
              yaxis = list(title = 'Temperature (degrees F)', showgrid = TRUE, showline = FALSE,
-              showticklabels = TRUE, tick.vals = 4))
+              showticklabels = TRUE, tick.vals = 4)) %>% 
+      layout(margin = list(l = 50, r = 40 , b = 60, t = 50, pad = 3))
     })
     
     # To render historical data
@@ -104,7 +105,8 @@ shinyServer(function(input, output) {
         layout(title = 'Historical Temperature Comparison',
                xaxis = list(title = 'Season', showgrid = TRUE, showline = FALSE, showticklabels = TRUE, dtick = 1),
                yaxis = list(title = 'Temperature (degrees F)', showgrid = TRUE, showline = FALSE,
-                            showticklabels = TRUE, tick.vals = 4))
+                            showticklabels = TRUE, tick.vals = 4)) %>% 
+        layout(margin = list(l = 50, r = 40 , b = 60, t = 50, pad = 3))
     })
     
     RenderPrecipPlot <- function(data1, data2){
@@ -126,7 +128,8 @@ shinyServer(function(input, output) {
         layout(title = 'Historical Precipitation Comparison (Avg)',
                xaxis = list(title = 'Season', showgrid = TRUE, showline = FALSE, showticklabels = TRUE, dtick = 1),
                yaxis = list(title = 'Precipitation (in)', showgrid = TRUE, showline = FALSE,
-                            showticklabels = TRUE, tick.vals = 4))
+                            showticklabels = TRUE, tick.vals = 4)) %>% 
+        layout(margin = list(l = 50, r = 40 , b = 60, t = 50, pad = 3))
       })
     }
     
@@ -145,7 +148,7 @@ shinyServer(function(input, output) {
       }
     })
       observeEvent(input$compare.button, ignoreNULL = TRUE, {
-        output$line.plot <- render.10day.plot
+        output$line.plot <- render10DayPlot
         output$historical.plot <- render.historical.plot
       })
 })
